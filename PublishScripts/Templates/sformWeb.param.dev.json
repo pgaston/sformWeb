@@ -1,0 +1,29 @@
+{
+  "siteName": {
+    "value": "sform"
+  },
+  "hostingPlanName": {
+    "value": "Default1"
+  },
+  "siteLocation": {
+    "value": "East US"
+  },
+  "sku": {
+    "value": "Shared"
+  },
+  "workerSize": {
+    "value": "0"
+  },
+  "siteMode": {
+    "value": "Limited"
+  },
+  "computeMode": {
+    "value": "0"
+  },
+  "subscriptionId": {
+    "value": "b943ee4b-265d-4232-9f5e-02a8e0a7cfd4"
+  },
+  "resourceGroup": {
+    "value": "Default-Web-EastUS"
+  }
+}
