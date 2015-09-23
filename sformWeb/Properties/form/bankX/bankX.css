@@ -1,0 +1,64 @@
+﻿/*
+[class*="col-"] {
+  padding-top: 15px;
+  padding-bottom: 15px;
+  background-color: #eee;
+  background-color: rgba(86,61,124,.15);
+  border: 1px solid #ddd;
+  border: 1px solid rgba(86,61,124,.2);
+}
+*/
+
+.Small 
+{
+    font-size:small;
+}
+.XSmall 
+{
+    font-size:x-small;
+}.Bold 
+{
+    font-weight:bold;
+}
+.RowHeader
+{
+    margin-top:10px; 
+    font-size:larger; 
+    font-weight:bold; 
+    width:100%; 
+    color:White; 
+    background-color:DarkBlue;
+}
+
+#mydiv {  
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    z-index:1000;
+    background-color:grey;
+    opacity: .8;
+ }
+
+.ajax-loader {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-left: -32px; /* -1 * image width / 2 */
+    margin-top: -32px;  /* -1 * image height / 2 */
+    display: block;     
+}
+
+/*.nav-tabs  {
+    background-color:lightslategray;
+}
+*/
+
+/* no work */
+/*
+.nav-tabs.nav-justified > li > a:link {
+  background: #eee;
+}
+
+*/

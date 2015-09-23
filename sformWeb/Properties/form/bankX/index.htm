@@ -1,0 +1,634 @@
+﻿<!doctype html>
+<html ng-app="bankX">
+<head>
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+    <script src="js/angular.js"></script>
+    <script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.11.0.js"></script>  
+    <link rel="stylesheet" href="bankX.css">
+    <script src="js/bankX.js"></script>
+</head>
+<body>
+
+    <form novalidate name="smartForm">
+        <div class="container" ng-controller="smartFormsController">
+
+            <div id="mydiv" ng-show="busy">
+                <img src="images/ajax-loader.gif" class="ajax-loader" />
+            </div>
+
+            <div class="row">
+                <div class="col-md-2 text-center"> <img src="images/bankX.png" style="width:80%;" alt="bankX Servicing" /></div>
+                <div class="col-md-6"><h2 style="color:DarkBlue;font-weight:bold;">BankX Express Servicing</h2></div>
+                <div class="col-md-2 text-center" style="font-size:x-small;">
+                    <!--
+                    <a ng-click="fLoad();" href="#" class="btn btn-sm btn-primary"><span class="glyphicon glyphicon-save"></span>Load</a>
+                        -->
+                </div>
+                <div class="col-md-2 text-center" style="font-size:x-small;">
+                    bankX-SVC-150922
+                    <br />
+                    <a ng-click="fSave(false);" href="#" class="btn btn-sm btn-primary"><span class="glyphicon glyphicon-save"></span>Save</a>
+                    
+                    
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12"><br /></div>
+            </div>
+
+            <tabset>
+                <!-- Tab one -->
+                <tab heading="Service Needs" active="data.tabs[0].active">
+                    <div class="row">
+                        <div class="col-md-1 XSmall">&nbsp;</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-1"></div>
+                        <div class="col-md-5">Requestor Name <input type='text' ng-model="data.requestor.name" placeholder="Enter requestor (usually your) name here" style="width:100%" /></div>
+                        <div class="col-md-3">
+                            Date&nbsp;<p class="input-group">
+                                <input type="text" class="form-control"
+                                       datepicker-popup="{{dateFormat}}"
+                                       ng-model="data.dt" is-open="$parent.opened"
+                                       datepicker-options="dateOptions" date-disabled="weekendDisabled(date, mode)"
+                                       ng-required="true" close-text="Close" />
+                                <span class="input-group-btn">
+                                    <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                                </span>
+                            </p>
+                        </div>
+                        <div class="col-md-1"></div>
+                        <div class="col-md-2 text-center" style="font-size:x-small;">
+                            <a href="#" class="btn btn-sm btn-primary"><span class="glyphicon glyphicon-comment"></span> Feedback</a>
+                            <br />(For internal use only)
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-md-1"></div>
+                        <div class="col-md-5">Client Name <input type='text' ng-model="data.client.name" placeholder="Enter client name here" style="width:100%" /></div>
+                        <div class="col-md-2">
+                            <div class="row">
+                                <div class="col-md-12">Client SRF <input type='text' ng-model="data.client.SRF" placeholder="Enter SRF here" /></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 XSmall">(Site Owner SRF, not MLE SRF)</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12 RowHeader">Select Client Type</div>
+                    </div>
+                    <div class="row"><div class="col-md-1 XSmall">&nbsp;</div></div>
+                    <div class="row">
+                        <div class="col-md-1"></div>
+                        <div class="col-md-7">
+                            <div class="btn-group">
+                                <label class="btn btn-primary" ng-model="data.clientType" btn-radio="'CFS'">Commercial Banking</label>
+                                <label class="btn btn-primary" ng-model="data.clientType" btn-radio="'Private'">Private Banking</label>
+                                <label class="btn btn-primary" ng-model="data.clientType" btn-radio="'GBSC'">Global Banking</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12 RowHeader">Select Servicing Needs</div>
+                    </div>
+
+                    <div class="row" collapse="data.clientType!=null">
+                        <div class="col-md-3"></div>
+                        <div class="col-md-9 Bold" style="margin-top:40px;">Please select a client type before continuing...</div>
+                    </div>
+
+                    <div collapse="data.clientType==null" style="margin-top:20px;">
+                        <!-- Accounts Section    -->
+                        <div class="row" style="margin-top:20px;">
+                            <div class="col-md-2 Bold">Accounts</div>
+                            <div class="col-md-8">
+                                <div class="row">
+                                    <div class="col-md-12 Bold">
+                                        <input type="checkbox" ng-model="data.sections.bOwnedAccounts"> Owned Accounts - Add/Delete/Modify
+                                    </div>
+                                    <div class="col-md-12 Bold" collapse="data.clientType=='Private'">
+                                        <input type="checkbox" ng-model="data.sections.bOwnedAccountsAdded"> Owned Accounts - Set Defaults When Accounts are Automatically Added
+                                    </div>
+                                    <div class="col-md-12 Bold">
+                                        <input type="checkbox" ng-model="data.sections.bNonOwnedAccounts"> Non-Owned (MLE) Accounts - Add/Delete/Modify
+                                    </div>
+                                    <div class="col-md-12 Bold" collapse="data.clientType=='Private'">
+                                        <input type="checkbox" ng-model="data.sections.bNonSRFAccounts"> Non-SRF Accounts (Trustee Accounts) - Add/Delete
+                                    </div>
+                                    <div class="col-md-12 Bold" collapse="data.clientType=='Private'">
+                                        <input type="checkbox" ng-model="data.sections.bACHAccounts"> ACH Accounts - Modify/Delete
+                                    </div>
+                                    <div class="col-md-12 Bold" collapse="data.clientType=='Private'">
+                                        <input type="checkbox" ng-model="data.sections.bCloseAccountServices"> Close Account Services
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-2 text-center">
+                                <a href="#" class="btn btn-md btn-info"><span class="glyphicon glyphicon-info-sign"></span> Glossary</a>
+                            </div>
+                        </div>
+                        <!-- Site Operations -->
+                        <div class="row" style="margin-top:10px;">
+                            <div class="col-md-2 Bold">Site Operations</div>
+                            <div class="col-md-8">
+                                <div class="row">
+                                    <div class="col-md-12 Bold">
+                                        <input type="checkbox" ng-model="data.sections.bServiceAdmin"> Service Administrator - Add/Delete/Modify
+                                    </div>
+                                    <div class="col-md-12 Bold">
+                                        <input type="checkbox" ng-model="data.sections.bTokensOrder"> Tokens - Order
+                                    </div>
+                                    <div class="col-md-12 Bold">
+                                        <input type="checkbox" ng-model="data.sections.bTwoFactorAuthentication"> Two Factor Authentication
+                                    </div>
+                                    <div class="col-md-12 Bold">
+                                        <input type="checkbox" ng-model="data.sections.bSingleDualAdmin"> Single/Dual Administration
+                                    </div>
+                                    <div class="col-md-12 Bold" collapse="data.clientType=='Private'">
+                                        <input type="checkbox" ng-model="data.sections.bSetMobileAccess"> Set Mobile Accesss
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Other -->
+                        <div class="row" style="margin-top:10px;">
+                            <div class="col-md-2 Bold">Other</div>
+                            <div class="col-md-8">
+                                <div class="row">
+                                    <div class="col-md-12 Bold">
+                                        <input type="checkbox" ng-model="data.sections.bClientContact"> Client Contact Information Change
+                                    </div>
+                                    <div class="col-md-12 Bold" collapse="data.clientType=='Private'">
+                                        <input type="checkbox" ng-model="data.sections.bATWiresFundsAvailability"> Account Transfers/Wires/Bill Payments - Fund Availability Changes
+                                    </div>
+                                    <div class="col-md-12 Bold" collapse="data.clientType=='Private'">
+                                        <input type="checkbox" ng-model="data.sections.bAmalgamation"> Amalgamation, Company Name Change
+                                    </div>
+                                    <div class="col-md-12 Bold" collapse="data.clientType=='Private'">
+                                        <input type="checkbox" ng-model="data.sections.bBalanceReporting"> Balance Reporting (BROPT) - Switch Option
+                                    </div>
+                                    <div class="col-md-12 Bold" collapse="data.clientType=='Private'">
+                                        <input type="checkbox" ng-model="data.sections.bCoreBillingOption"> Core Services Client - Billing Option Change
+                                    </div>
+                                    <div class="col-md-12 Bold" collapse="data.clientType=='Private'">
+                                        <input type="checkbox" ng-model="data.sections.bWiresBillingOption"> Wires Service - Billing Option Change
+                                    </div>
+                                    <div class="col-md-12 Bold" collapse="data.clientType=='Private'">
+                                        <input type="checkbox" ng-model="data.sections.bChargebackBillingOption"> Chargeback Reporting Service - Billing Option Change
+                                    </div>
+                                    <div class="col-md-12 Bold" collapse="data.clientType=='Private'">
+                                        <input type="checkbox" ng-model="data.sections.bAcctTransfersTokenEnablement"> Account Transfers - Token Enablement Option Changes
+                                    </div>
+                                    <div class="col-md-12 Bold" collapse="data.clientType=='Private'">
+                                        <input type="checkbox" ng-model="data.sections.bBillPayTokenEnablement"> Bill Payment - Token Enablement Option Changes
+                                    </div>
+                                    <div class="col-md-12 Bold" collapse="data.clientType=='Private'">
+                                        <input type="checkbox" ng-model="data.sections.bATWiresDirectBooking"> Switch client to direct booking for Account Transfers and Wire Payments modules
+                                    </div>
+                                    <div class="col-md-12 Bold" collapse="data.clientType=='Private'">
+                                        <input type="checkbox" ng-model="data.sections.bbankXCancellation"> BankX Express Cancellation
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Private Banking CBR -->
+                        <div class="row" style="margin-top:10px;" collapse="data.clientType!='Private'">
+                            <div class="col-md-2 Bold">Private Banking CBR</div>
+                            <div class="col-md-8">
+                                <div class="row">
+                                    <div class="col-md-12 Bold">
+                                        <input type="checkbox" ng-model="data.sections.bPBCloseServices"> Close Services
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row" style="margin-top:20px; margin-bottom:40px;">
+                            <div class="col-md-4"></div>
+                            <div class="col-md-8">
+                                <a href="#" ng-click="data.tabs[1].active = true" class="btn btn-md btn-primary">Continue - to Next Tab <span class="glyphicon glyphicon-arrow-right"></span></a>
+                            </div>
+                        </div>
+                    </div>
+                </tab>
+
+                <!-- Tab two -->
+                <tab heading="Gather Information" active="data.tabs[1].active" select="fTab2or3()">
+                    <div class="row">
+                        <div class="col-md-1 XSmall">&nbsp;</div>
+                    </div>
+
+                    <div ng-show="!bAnyServices">
+                        <div class="row">
+                            <div class="col-md-3"></div>
+                            <div class="col-md-9 Bold" style="margin-top:20px;">Please select at least one Servicing Need on the first tab</div>
+                        </div>
+                        <div class="row" style="margin-top:40px;">
+                            <div class="col-md-12 col-md-offset-4">
+                                <a ng-click="data.tabs[0].active = true" class="btn btn-md btn-primary"><span class="glyphicon glyphicon-arrow-left"></span> to First Tab</a>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div ng-show="bAnyServices">
+                        <!-- always show-->
+                        <div class="row">
+                            <div class="col-md-12 RowHeader">Affected Sites</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-1"></div>
+                            <div class="col-md-5">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        For Site(s)<br />
+                                        <div class="btn-group">
+                                            <label class="btn btn-primary" ng-model="data.sites.allSites" btn-radio="'All Sites'">All Sites</label>
+                                            <label class="btn btn-primary" ng-model="data.sites.allSites" btn-radio="'Site Number'">Site Number</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1" collapse="data.sites.allSites=='All Sites'">
+                                        Site <input type='number' ng-model="data.sites.site" />
+                                    </div>
+                                    <div class="col-md-5"></div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                        <!-- bClientContact -->
+                        <div ng-show="data.sections.bClientContact">
+                            <div class="row">
+                                <div class="col-md-12 RowHeader">Client Contact Information Change</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">&nbsp;</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-1"></div>
+                                <div class="col-md-2 Bold">Address</div>
+                                <div class="col-md-8">
+                                    <div class="row">
+                                        <div class="col-md-12">Street <input type='text' ng-model="data.clientcontact.street" placeholder="Enter street address" style="width:100%" /></div>
+                                        <div class="col-md-12">
+                                            <div class="row">
+                                                <div class="col-md-6">City <input type='text' ng-model="data.clientcontact.city" placeholder="Enter city" style="width:100%" /></div>
+                                                <div class="col-md-4">Province/State <input type='text' ng-model="data.clientcontact.province" placeholder="Enter province/state" style="width:100%" /></div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-3">Postal Code/Zip <input type='text' ng-model="data.clientcontact.postalcode" placeholder="Enter postal code" style="width:100%" /></div>
+                                                <div class="col-md-4">
+                                                    Country<br />
+                                                    <div class="btn-group">
+                                                        <label class="btn btn-primary" ng-model="data.clientcontact.country" btn-radio="'Canada'">Canada</label>
+                                                        <label class="btn btn-primary" ng-model="data.clientcontact.country" btn-radio="'USA'">USA</label>
+                                                        <label class="btn btn-primary" ng-model="data.clientcontact.country" btn-radio="'Other'">Other</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-5" collapse="data.clientcontact.country=='Canada' || data.clientcontact.country=='USA' ">
+                                                    Other Country <input type='text' placeholder="Enter other country" ng-model="data.clientcontact.countryOther" style="width:100%" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="row">
+                                <div class="col-md-1"></div>
+                                <div class="col-md-2 Bold">Primary Contact</div>
+
+                                <div class="col-md-8">
+                                    <div class="row">
+                                        <div class="col-md-12">Name <input type='text' ng-model="data.clientcontact.primaryname" placeholder="Enter primary contact name" style="width:100%" /></div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">Email <input type='text' ng-model="data.clientcontact.primaryemail" placeholder="Enter primary contact email address" style="width:100%" /></div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="row">
+
+                                                <div class="col-md-6">
+                                                    Phone <input type='text' ng-model="data.clientcontact.primaryphone" placeholder="Enter primary contact phone" style="width:100%" />
+                                                </div>
+                                                <div class="col-md-6">
+                                                    Fax <input type='text' ng-model="data.clientcontact.primaryfax" placeholder="Enter primary contact fax" style="width:100%" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-1"></div>
+                                <div class="col-md-2 Bold">Alternate Contact</div>
+
+                                <div class="col-md-8">
+                                    <div class="row">
+                                        <div class="col-md-12">Name <input type='text' ng-model="data.clientcontact.alternatename" placeholder="Enter alternate contact name" style="width:100%" /></div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">Email <input type='text' ng-model="data.clientcontact.alternateemail" placeholder="Enter alternate contact email address" style="width:100%" /></div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="row">
+
+                                                <div class="col-md-6">
+                                                    Phone <input type='text' ng-model="data.clientcontact.alternatephone" placeholder="Enter alternate contact phone" style="width:100%" />
+                                                </div>
+                                                <div class="col-md-6">
+                                                    Fax <input type='text' ng-model="data.clientcontact.alternatefax" placeholder="Enter alternate contact fax" style="width:100%" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                            <div class="row">
+                                <div class="col-md-1"></div>
+                                <div class="col-md-10 Bold">
+                                    <label class="checkbox">
+                                        <input type="checkbox" ng-model="data.clientcontact.bChangeBalanceReporting">
+                                        Change applies to BankX Balance Reporting
+                                    </label>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- bbankXCancellation -->
+                        <div ng-show="data.sections.bbankXCancellation">
+                            <div class="rowBankX
+                        <div class=" col-md-12 RowHeader">BankX Express Cancellation</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">&nbsp;</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-1"></div>
+                            <div class="col-md-2">Cancellation Reason</div>
+                            <div class="col-md-4">
+                                <select ng-model="data.closeReason">
+                                    <option>Client leaving BankX</option>
+                                    <option>Client closing account</option>
+                                    <option>Client out of business/bankrupt</option>
+                                    <option>SRF change/SRF ownership change</option>
+                                    <option>Service no longer required</option>
+                                    <option>Fraud</option>
+                                    <option>Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-1"></div>
+                            <div class="col-md-7" style="color:Red;">
+                                <br />
+                                Note: Site closure will remove client's access to historical information. Please remind client
+                                to export any required historical information before submission of this site closure request.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row" style="margin-top:40px;" ng-show="bAnyServices">
+                        <div class="col-md-12 col-md-offset-4">
+                            <a href="#" ng-click="data.tabs[2].active = true" class="btn btn-md btn-primary">Continue - to Next Tab <span class="glyphicon glyphicon-arrow-right"></span></a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">&nbsp;</div>
+                    </div>
+                </tab>
+
+                <!-- Tab three -->
+                <tab heading="Implement Servicing" active="data.tabs[2].active" select="fTab2or3()">
+                    <div class="row">
+                        <div class="col-md-1 XSmall">&nbsp;</div>
+                    </div>
+                    <div ng-show="!bAnyServices">
+                        <div class="row">
+                            <div class="col-md-3"></div>
+                            <div class="col-md-9 Bold" style="margin-top:20px;">Please select at least one Servicing Need on the first tab</div>
+                        </div>
+                        <div class="row" style="margin-top:40px;">
+                            <div class="col-md-12 col-md-offset-4">
+                                <a ng-click="data.tabs[0].active = true" class="btn btn-md btn-primary"><span class="glyphicon glyphicon-arrow-left"></span> to First Tab</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div ng-show="bAnyServices">
+                        <!-- !bAnyServices and !validation -->
+                        <!-- t.b.d. -->
+                    </div>
+
+                    <div ng-show="bAnyServices">
+                        <!-- !bAnyServices and validation -->
+                        <!-- to EBB only for now -->
+                        <div ng-show="data.routeEBB">
+                            <div class="row">
+                                <div class="col-md-12 RowHeader">Instructions to Requestor</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">&nbsp;</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-1"></div>
+                                <div class="col-md-6">
+                                    As the requestor, when you press the button to the right...
+                                    <ol>
+                                        <li>An email message will appear addressed to EBB with this form attached</li>
+                                        <li>Do not add text to the email, only the information in the form will be used</li>
+                                    </ol>
+                                    This information will processed within 2-3 business days.
+                                </div>
+                                <div class="col-md-1"></div>
+                                <div class="col-md-3">
+                                    <a ng-click="fSave(true);" class="btn btn-lg btn-primary">Email Form to EBB <span class="glyphicon glyphicon-arrow-right"></span></a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- test for use in email as well...  Only use minimal css -->
+                        <div id='sendData'>
+
+                            <div class="row">
+                                <div class="col-md-12 RowHeader">Instructions to Processor - Client Information</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">&nbsp;</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-1"></div>
+                                <div class="col-md-3">Requestor Name</div>
+                                <div class="col-md-8">{{data.requestor.name}}</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-1"></div>
+                                <div class="col-md-3">Requestor Date</div>
+                                <div class="col-md-8">{{data.dt | date : 'yyyy-MM-dd'}}</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-1"></div>
+                                <div class="col-md-3">Client Name</div>
+                                <div class="col-md-8">{{data.client.name}}</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-1"></div>
+                                <div class="col-md-3">Requestor SRF</div>
+                                <div class="col-md-8">{{data.client.SRF}}</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-1"></div>
+                                <div class="col-md-3">Site(s)</div>
+                                <div class="col-md-8">
+                                    <span ng-show="data.sites.allSites=='All Sites'">ALL SITES</span>
+                                    <span ng-hide="data.sites.allSites=='All Sites'">{{data.sites.site}}</span>
+                                </div>
+                            </div>
+
+
+
+
+
+
+                            <!-- client contact information -->
+                            <div ng-show="data.sections.bClientContact">
+                                <div class="row">
+                                    <div class="col-md-12 RowHeader">Client Contact Information Change</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">&nbsp;</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-1"></div>
+                                    <div class="col-md-2 Bold">Address</div>
+                                    <div class="col-md-8">
+                                        <div class="row">
+                                            <div class="col-md-3">Street</div>
+                                            <div class="col-md-9">{{data.clientcontact.street}}</div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-3">City</div>
+                                            <div class="col-md-9">{{data.clientcontact.city}}</div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-3">Province/State</div>
+                                            <div class="col-md-9">{{data.clientcontact.province}}</div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-3">Country</div>
+                                            <div class="col-md-9">
+                                                <span ng-show="data.clientcontact.country=='Canada' || data.clientcontact.country=='USA' ">{{data.clientcontact.country}}</span>
+                                                <span ng-hide="data.clientcontact.country=='Canada' || data.clientcontact.country=='USA' ">{{data.clientcontact.countryOther}}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-1"></div>
+                                    <div class="col-md-2 Bold">Primary Contact</div>
+
+                                    <div class="col-md-8">
+                                        <div class="row">
+                                            <div class="col-md-3">Name</div>
+                                            <div class="col-md-9">{{data.clientcontact.primaryname}}</div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-3">Email</div>
+                                            <div class="col-md-9">{{data.clientcontact.primaryemail}}</div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-3">Phone</div>
+                                            <div class="col-md-9">{{data.clientcontact.primaryphone}}</div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-3">Fax</div>
+                                            <div class="col-md-9">{{data.clientcontact.primaryfax}}</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-1"></div>
+                                    <div class="col-md-2 Bold">Alternate Contact</div>
+
+                                    <div class="col-md-8">
+                                        <div class="row">
+                                            <div class="col-md-3">Name</div>
+                                            <div class="col-md-9">{{data.clientcontact.alternatename}}</div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-3">Email</div>
+                                            <div class="col-md-9">{{data.clientcontact.alternateemail}}</div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-3">Phone</div>
+                                            <div class="col-md-9">{{data.clientcontact.alternatephone}}</div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-3">Fax</div>
+                                            <div class="col-md-9">{{data.clientcontact.alternatefax}}</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-1"></div>
+                                    <div class="col-md-10 Bold">
+                                        <label class="checkbox">
+                                            <input type="checkbox" ng-model="data.clientcontact.bChangeBalanceReporting" ng-disabled="true">
+                                            Change applies to BankX Balance Reporting
+                                        </label>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <!-- bbankXCancellation -->
+                            <div ng-show="data.sections.bbankXCancellation">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="RowHeader">BankX Express Cancellation</div>
+                                    </div>
+                                </div>w
+                                <div class="row">
+                                    <div class="col-md-12">&nbsp;</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-1"></div>
+                                    <div class="col-md-2">Cancellation Reason</div>
+                                    <div class="col-md-4"><strong>{{data.closeReason}}</strong></div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12">&nbsp;</div>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+
+                </tab>
+            </tabset>
+
+</div>
+    </form>
+</body>
+</html>
