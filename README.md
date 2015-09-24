@@ -1,4 +1,4 @@
-# Smart Forms - From the Web
+# Smart Forms - 'No IT'
 Smart Forms, fed from the cloud.
 
 This is part of the 'No IT' integration stack:
