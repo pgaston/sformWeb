@@ -1,7 +1,7 @@
 # Smart Forms - From the Web
 Smart Forms, fed from the cloud.
 
-This is part of an integration stack to deliver our 'No IT' solutions:
+This is part of the 'No IT' integration stack:
 - Document reader (cross platform)
 - Web delivery - leveraging SharePoint
 - Web delivery - from the cloud (this site)
